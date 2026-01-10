@@ -13,8 +13,8 @@ npx tsc
 echo "Generating Prisma client..."
 npx prisma generate
 
-# Push database schema
+# Push database schema (create database if it doesn't exist)
 echo "Pushing database schema..."
-npx prisma db push
+npx prisma db push --force-reset
 
 echo "Build completed successfully!"
