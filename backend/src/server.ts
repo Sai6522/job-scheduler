@@ -10,8 +10,7 @@ const PORT = process.env.PORT || 3001;
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
     ? [
-        'https://sai6522.github.io',
-        'https://*.github.io'
+        'https://sai6522.github.io'
       ].concat(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : [])
     : ['http://localhost:3000'],
   credentials: true
