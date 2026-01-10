@@ -161,9 +161,10 @@ When a job completes, the system sends a POST request to the configured webhook 
 
 **What AI Did NOT Help With:**
 - Business logic decisions and architecture choices
-- Error handling strategies
-- Production deployment considerations
-- Security implementation details
+- Error handling strategies and implementation details
+- Production deployment considerations and security patterns
+- Database schema optimization and indexing decisions
+- UI/UX design decisions and user flow planning
 
 ## Features Implemented
 
