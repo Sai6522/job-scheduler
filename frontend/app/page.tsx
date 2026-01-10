@@ -29,10 +29,17 @@ export default function Dashboard() {
       if (filters.status) params.append('status', filters.status)
       if (filters.priority) params.append('priority', filters.priority)
       
-      const response = await axios.get(`/api/jobs?${params}`)
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
+      const url = `${apiUrl}/api/jobs?${params}`
+      console.log('Fetching jobs from:', url)
+      
+      const response = await axios.get(url)
+      console.log('Jobs response:', response.data)
       setJobs(response.data)
     } catch (error) {
       console.error('Failed to fetch jobs:', error)
+      // Show error in UI
+      alert('Failed to fetch jobs. Check console for details.')
     } finally {
       setLoading(false)
     }
@@ -40,7 +47,8 @@ export default function Dashboard() {
 
   const runJob = async (id: number) => {
     try {
-      await axios.post(`/api/run-job/${id}`)
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
+      await axios.post(`${apiUrl}/api/run-job/${id}`)
       fetchJobs() // Refresh jobs
     } catch (error) {
       console.error('Failed to run job:', error)

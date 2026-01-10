@@ -29,13 +29,15 @@ async function initializeDatabase() {
 }
 
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? [
-        'https://sai6522.github.io'
-      ].concat(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : [])
-    : ['http://localhost:3000'],
+  origin: true, // Allow all origins for now
   credentials: true
 }));
+
+// Add request logging
+app.use((req: Request, res: Response, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path} - Origin: ${req.get('Origin')}`);
+  next();
+});
 app.use(express.json());
 
 // Health check endpoint

@@ -22,7 +22,8 @@ export default function JobForm({ onJobCreated }: JobFormProps) {
       setLoading(true)
       const payload = JSON.parse(formData.payload)
       
-      await axios.post('/api/jobs', {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
+      await axios.post(`${apiUrl}/api/jobs`, {
         taskName: formData.taskName,
         payload,
         priority: formData.priority
