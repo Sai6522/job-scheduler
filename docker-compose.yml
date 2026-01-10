@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "3001:3001"
+    environment:
+      - DATABASE_URL=file:./dev.db
+      - WEBHOOK_URL=${WEBHOOK_URL}
+      - PORT=3001
+    volumes:
+      - ./backend/prisma:/app/prisma
+    depends_on:
+      - db
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+  db:
+    image: sqlite:latest
+    volumes:
+      - db_data:/data
+
+volumes:
+  db_data:
