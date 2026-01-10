@@ -5,8 +5,6 @@ const nextConfig = {
   images: {
     unoptimized: true
   },
-  basePath: process.env.NODE_ENV === 'production' ? '/job-scheduler' : '',
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/job-scheduler/' : '',
   async rewrites() {
     return [
       {
