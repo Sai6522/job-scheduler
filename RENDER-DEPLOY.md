@@ -25,8 +25,8 @@ Click "Advanced" and add:
 DATABASE_URL=file:./prod.db
 WEBHOOK_URL=https://webhook.site/your-unique-id
 NODE_ENV=production
-PORT=10000
 ```
+**Note**: Don't set PORT - Render sets this automatically
 
 ## 5. Deploy
 1. Click "Create Web Service"
