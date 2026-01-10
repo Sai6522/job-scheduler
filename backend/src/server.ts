@@ -1,0 +1,131 @@
+import express from 'express';
+import cors from 'cors';
+import { PrismaClient } from '@prisma/client';
+import axios from 'axios';
+
+const app = express();
+const prisma = new PrismaClient();
+const PORT = process.env.PORT || 3001;
+
+app.use(cors());
+app.use(express.json());
+
+// Create job
+app.post('/api/jobs', async (req, res) => {
+  try {
+    const { taskName, payload, priority } = req.body;
+    
+    if (!taskName || !payload || !priority) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const job = await prisma.job.create({
+      data: {
+        taskName,
+        payload: JSON.stringify(payload),
+        priority,
+        status: 'pending'
+      }
+    });
+
+    res.json(job);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to create job' });
+  }
+});
+
+// List jobs with filters
+app.get('/api/jobs', async (req, res) => {
+  try {
+    const { status, priority } = req.query;
+    
+    const where: any = {};
+    if (status) where.status = status;
+    if (priority) where.priority = priority;
+
+    const jobs = await prisma.job.findMany({
+      where,
+      orderBy: { createdAt: 'desc' }
+    });
+
+    res.json(jobs);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch jobs' });
+  }
+});
+
+// Get job details
+app.get('/api/jobs/:id', async (req, res) => {
+  try {
+    const job = await prisma.job.findUnique({
+      where: { id: parseInt(req.params.id) }
+    });
+
+    if (!job) {
+      return res.status(404).json({ error: 'Job not found' });
+    }
+
+    res.json(job);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch job' });
+  }
+});
+
+// Run job
+app.post('/api/run-job/:id', async (req, res) => {
+  try {
+    const jobId = parseInt(req.params.id);
+    
+    // Set status to running
+    await prisma.job.update({
+      where: { id: jobId },
+      data: { status: 'running' }
+    });
+
+    res.json({ message: 'Job started' });
+
+    // Simulate processing in background
+    setTimeout(async () => {
+      try {
+        // Complete the job
+        const completedJob = await prisma.job.update({
+          where: { id: jobId },
+          data: { status: 'completed' }
+        });
+
+        // Trigger webhook
+        const webhookPayload = {
+          jobId: completedJob.id,
+          taskName: completedJob.taskName,
+          priority: completedJob.priority,
+          payload: JSON.parse(completedJob.payload),
+          completedAt: new Date().toISOString()
+        };
+
+        if (process.env.WEBHOOK_URL) {
+          try {
+            await axios.post(process.env.WEBHOOK_URL, webhookPayload);
+            console.log('Webhook sent successfully for job:', jobId);
+          } catch (webhookError) {
+            console.error('Webhook failed for job:', jobId, webhookError.message);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to complete job:', jobId, error);
+      }
+    }, 3000);
+
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to run job' });
+  }
+});
+
+// Test webhook receiver
+app.post('/api/webhook-test', (req, res) => {
+  console.log('Webhook received:', req.body);
+  res.json({ message: 'Webhook received', data: req.body });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
