@@ -7,7 +7,12 @@ const app = express();
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3001;
 
-app.use(cors());
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? [process.env.FRONTEND_URL, 'https://*.vercel.app']
+    : ['http://localhost:3000'],
+  credentials: true
+}));
 app.use(express.json());
 
 // Create job
