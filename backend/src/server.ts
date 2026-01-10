@@ -76,6 +76,19 @@ app.post('/api/run-job/:id', async (req, res) => {
   try {
     const jobId = parseInt(req.params.id);
     
+    // Validate job exists and is pending
+    const existingJob = await prisma.job.findUnique({
+      where: { id: jobId }
+    });
+
+    if (!existingJob) {
+      return res.status(404).json({ error: 'Job not found' });
+    }
+
+    if (existingJob.status !== 'pending') {
+      return res.status(400).json({ error: 'Job is not in pending status' });
+    }
+    
     // Set status to running
     await prisma.job.update({
       where: { id: jobId },
@@ -112,6 +125,11 @@ app.post('/api/run-job/:id', async (req, res) => {
         }
       } catch (error) {
         console.error('Failed to complete job:', jobId, error);
+        // Set job status to failed on error
+        await prisma.job.update({
+          where: { id: jobId },
+          data: { status: 'failed' }
+        }).catch(() => {});
       }
     }, 3000);
 
