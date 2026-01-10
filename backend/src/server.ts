@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import cors from 'cors';
 import { PrismaClient } from '@prisma/client';
 import axios from 'axios';
@@ -21,7 +21,7 @@ app.use(cors({
 app.use(express.json());
 
 // Create job
-app.post('/api/jobs', async (req, res) => {
+app.post('/api/jobs', async (req: Request, res: Response) => {
   try {
     const { taskName, payload, priority } = req.body;
     
@@ -45,7 +45,7 @@ app.post('/api/jobs', async (req, res) => {
 });
 
 // List jobs with filters
-app.get('/api/jobs', async (req, res) => {
+app.get('/api/jobs', async (req: Request, res: Response) => {
   try {
     const { status, priority } = req.query;
     
@@ -65,7 +65,7 @@ app.get('/api/jobs', async (req, res) => {
 });
 
 // Get job details
-app.get('/api/jobs/:id', async (req, res) => {
+app.get('/api/jobs/:id', async (req: Request, res: Response) => {
   try {
     const job = await prisma.job.findUnique({
       where: { id: parseInt(req.params.id) }
@@ -82,7 +82,7 @@ app.get('/api/jobs/:id', async (req, res) => {
 });
 
 // Run job
-app.post('/api/run-job/:id', async (req, res) => {
+app.post('/api/run-job/:id', async (req: Request, res: Response) => {
   try {
     const jobId = parseInt(req.params.id);
     
@@ -129,7 +129,7 @@ app.post('/api/run-job/:id', async (req, res) => {
           try {
             await axios.post(process.env.WEBHOOK_URL, webhookPayload);
             console.log('Webhook sent successfully for job:', jobId);
-          } catch (webhookError) {
+          } catch (webhookError: any) {
             console.error('Webhook failed for job:', jobId, webhookError.message);
           }
         }
@@ -149,7 +149,7 @@ app.post('/api/run-job/:id', async (req, res) => {
 });
 
 // Test webhook receiver
-app.post('/api/webhook-test', (req, res) => {
+app.post('/api/webhook-test', (req: Request, res: Response) => {
   console.log('Webhook received:', req.body);
   res.json({ message: 'Webhook received', data: req.body });
 });
