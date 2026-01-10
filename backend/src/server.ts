@@ -3,6 +3,16 @@ import cors from 'cors';
 import { PrismaClient } from '@prisma/client';
 import axios from 'axios';
 
+// Fix DATABASE_URL format if needed
+if (process.env.DATABASE_URL && !process.env.DATABASE_URL.startsWith('file:') && !process.env.DATABASE_URL.startsWith('sqlite:')) {
+  process.env.DATABASE_URL = `file:${process.env.DATABASE_URL}`;
+}
+
+// Set default if not provided
+if (!process.env.DATABASE_URL) {
+  process.env.DATABASE_URL = 'file:./prod.db';
+}
+
 const app = express();
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 10000;
@@ -12,6 +22,7 @@ async function initializeDatabase() {
   try {
     await prisma.$connect();
     console.log('Database connected successfully');
+    console.log('DATABASE_URL:', process.env.DATABASE_URL);
   } catch (error) {
     console.error('Database connection failed:', error);
   }
