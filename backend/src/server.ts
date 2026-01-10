@@ -5,7 +5,17 @@ import axios from 'axios';
 
 const app = express();
 const prisma = new PrismaClient();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 10000;
+
+// Initialize database connection
+async function initializeDatabase() {
+  try {
+    await prisma.$connect();
+    console.log('Database connected successfully');
+  } catch (error) {
+    console.error('Database connection failed:', error);
+  }
+}
 
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
@@ -16,6 +26,29 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
+
+// Health check endpoint
+app.get('/', (req: Request, res: Response) => {
+  res.json({ 
+    message: 'Job Scheduler API is running',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
+// API health check
+app.get('/api', (req: Request, res: Response) => {
+  res.json({ 
+    message: 'Job Scheduler API v1.0',
+    endpoints: [
+      'GET /api/jobs',
+      'POST /api/jobs', 
+      'GET /api/jobs/:id',
+      'POST /api/run-job/:id',
+      'POST /api/seed'
+    ]
+  });
+});
 
 // Create job
 app.post('/api/jobs', async (req: Request, res: Response) => {
@@ -241,6 +274,7 @@ app.post('/api/seed', async (req: Request, res: Response) => {
   }
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', async () => {
   console.log(`Server running on port ${PORT}`);
+  await initializeDatabase();
 });
