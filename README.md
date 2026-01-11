@@ -406,9 +406,13 @@ Include job details in the payload and handle webhook failures gracefully."
 
 ## 🚀 Deployment
 
-This application is configured for deployment on Render with automatic database setup and environment variable management. See deployment documentation for detailed instructions.
+This application is deployed on Render with automatic database setup and environment variable management.
 
-**Live Demo**: [Coming Soon]
+**Live Demo**: 
+- **Frontend**: [https://job-scheduler-1-p5z6.onrender.com](https://job-scheduler-1-p5z6.onrender.com)
+- **Backend API**: [https://job-scheduler-haov.onrender.com](https://job-scheduler-haov.onrender.com)
+
+**API Health Check**: [https://job-scheduler-haov.onrender.com/](https://job-scheduler-haov.onrender.com/)
 
 ## 📝 Development Notes
 
