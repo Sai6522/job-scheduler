@@ -2,7 +2,7 @@
 
 A full-stack web application for managing and executing background jobs with webhook notifications.
 
-![Job Scheduler Dashboard](https://via.placeholder.com/800x400/1f2937/ffffff?text=Job+Scheduler+Dashboard)
+![Job Scheduler Dashboard](https://github.com/Sai6522/job-scheduler/blob/1a1c037c08bd6d3d12e48ac99a50f893a88e5249/Job%20Scheduler%20Dashboard.png)
 
 ## 🚀 Tech Stack
 
