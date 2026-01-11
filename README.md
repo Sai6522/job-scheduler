@@ -281,7 +281,7 @@ docker-compose up --build
 ## 🤖 AI Usage Documentation
 
 ### **AI Tools Used**
-- **Primary Tool**: Kiro CLI (AWS AI Assistant)
+- **Primary Tool**: Claude
 - **Model**: Claude 3.5 Sonnet
 - **Usage Period**: January 10-11, 2026
 - **Total Sessions**: 15+ interactions
